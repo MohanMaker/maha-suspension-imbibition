@@ -4,21 +4,32 @@ import matplotlib.pyplot as plt
 
 # define an array of integers to hold the min x location of the vertical bar in every frame
 min_x_locations = []
-def analysis(frame):
-    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    frame = cv2.GaussianBlur(frame, (5, 5), 0)
+def analysis_darkest(frame):
+    # Convert to grayscale
+    frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
-    # Find the vertical bar with the minimum gray value in the frame
-    avg_intensities = np.mean(frame, axis=0)
-    min_x_loc = np.argmin(avg_intensities)
-    marked_frame = cv2.line(frame.copy(), (min_x_loc, 0), (min_x_loc, frame.shape[0]), (0, 0, 255), 2)
-    
-    min_x_locations.append(min_x_loc)
+    # Compress each column of pixels into one pixel by taking the median, which excludes outliers
+    compressed_frame = np.median(frame_gray, axis=0)
 
-    return marked_frame
+    # Calculate the derivative of the compressed frame
+    derivative = np.diff(compressed_frame)
+
+    # Find the location of the largest spike in the derivative
+    # We use np.argmin here because a spike (large negative change) indicates the presence of the front
+    spike_locs = np.where(derivative == np.amin(derivative))[0]
+    if spike_locs.size > 0:
+        min_x_loc = spike_locs[0]  # Taking the first spike location
+        min_x_locations.append(min_x_loc)
+        # Draw a line at the position of the detected front
+        frame_marked = cv2.line(frame.copy(), (min_x_loc, 0), (min_x_loc, frame.shape[0]), (255, 0, 0), 2)
+    else:
+        frame_marked = frame.copy()
+        min_x_locations.append(np.nan)  # Append NaN to indicate no spike was found
+
+    return frame_marked
 
 # Open the video file.
-video_path = "output_cropped.avi"
+video_path = "media/DSC_0038_cropped2.avi"
 cap = cv2.VideoCapture(video_path)
 
 # Check if the video file was opened successfully.
@@ -45,7 +56,9 @@ while True:
 
         break
 
-    marked_frame = analysis(frame)
+    # Use the analysis function that works with the darkest point
+    # and extract only the image from the returned tuple for displaying
+    marked_frame = analysis_darkest(frame)
 
     # Display the frame.
     cv2.imshow('Video Playback', marked_frame)
