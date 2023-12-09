@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
-def analyze_liquid_front(frame, last_location=None, window_width=100, intensity_threshold=5):
+def analyze_liquid_front(frame, last_location=None, window_width=50, intensity_threshold=3):
     # Convert to grayscale and blur the image
     gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     blurred_frame = cv2.GaussianBlur(gray_frame, (3, 3), 0)
