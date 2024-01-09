@@ -1,6 +1,8 @@
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
+import csv
+import os
 
 def analyze_liquid_front(frame, last_location=None, window_width=50, intensity_threshold=3):
     # Convert to grayscale and blur the image
@@ -40,37 +42,45 @@ def analyze_liquid_front(frame, last_location=None, window_width=50, intensity_t
     return marked_frame, liquid_front_location
 
 def main(video_path):
-    # Stores the liquid front location for each frame
     liquid_front_locations = []
-    
-    # Video capture
+    frame_count = 0
+
     cap = cv2.VideoCapture(video_path)
     if not cap.isOpened():
         print("Error: Could not open video.")
         return
 
-    last_location = None  # Initialize last known location
+    last_location = None
 
-    # Frame by frame analysis
-    while True:
-        ret, frame = cap.read()
-        if not ret:
-            break
+    # Extract base name of the video file and create a CSV filename
+    video_base_name = os.path.basename(video_path)
+    csv_filename = f"{os.path.splitext(video_base_name)[0]}_data.csv"
 
-        marked_frame, location = analyze_liquid_front(frame, last_location)
-        last_location = location  # Update last known location
-        liquid_front_locations.append(location)
-        cv2.imshow('Video Playback', marked_frame)
+    # Open a CSV file with the new name
+    with open(csv_filename, 'w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(['Frame Number', 'Liquid Front X Location'])
 
-        # Exit on 'q' keypress
-        if cv2.waitKey(25) & 0xFF == ord('q'):
-            break
+        while True:
+            ret, frame = cap.read()
+            if not ret:
+                break
 
-    # Cleanup
+            marked_frame, location = analyze_liquid_front(frame, last_location)
+            last_location = location
+            liquid_front_locations.append(location)
+
+            # Write frame number and location to CSV
+            writer.writerow([frame_count, location])
+            frame_count += 1
+
+            cv2.imshow('Video Playback', marked_frame)
+            if cv2.waitKey(25) & 0xFF == ord('q'):
+                break
+
     cap.release()
     cv2.destroyAllWindows()
 
-    # Plot results
     plt.plot(liquid_front_locations)
     plt.xlabel('Frame Number')
     plt.ylabel('Liquid Front X Location')
@@ -78,5 +88,5 @@ def main(video_path):
     plt.show()
 
 if __name__ == "__main__":
-    video_path = "media/DSC_0036_cropped2.avi"
+    video_path = "media/DSC_0036_cropped3.avi"
     main(video_path)
