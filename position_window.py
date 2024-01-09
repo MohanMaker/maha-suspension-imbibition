@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy.signal import savgol_filter
 import csv
 import os
 
@@ -20,8 +21,11 @@ def analyze_liquid_front(frame, last_location=None, window_width=50, intensity_t
     # Median of each column to represent the column
     compressed_frame = np.median(search_frame, axis=0)
 
+    # Apply Savitzky-Golay filter to smooth the intensity profile
+    smoothed_frame = savgol_filter(compressed_frame, 3, 2)  # window size 5, polynomial order 2
+
     # Find the sharpest change in intensity
-    intensity_change = np.diff(compressed_frame)
+    intensity_change = np.diff(smoothed_frame)
     local_front_location = np.argmin(intensity_change)
     change_at_front = np.min(intensity_change)
 
@@ -52,11 +56,9 @@ def main(video_path):
 
     last_location = None
 
-    # Extract base name of the video file and create a CSV filename
-    video_base_name = os.path.basename(video_path)
-    csv_filename = f"{os.path.splitext(video_base_name)[0]}_data.csv"
+    csv_filename = f"{os.path.splitext(os.path.basename(video_path))[0]}_data.csv"
 
-    # Open a CSV file with the new name
+    # Open CSV file to save data
     with open(csv_filename, 'w', newline='') as file:
         writer = csv.writer(file)
         writer.writerow(['Frame Number', 'Liquid Front X Location'])
@@ -66,14 +68,16 @@ def main(video_path):
             if not ret:
                 break
 
+            # Analyze each frame
             marked_frame, location = analyze_liquid_front(frame, last_location)
             last_location = location
             liquid_front_locations.append(location)
 
-            # Write frame number and location to CSV
+            # Save data to CSV file
             writer.writerow([frame_count, location])
             frame_count += 1
 
+            # Display the marked frame
             cv2.imshow('Video Playback', marked_frame)
             if cv2.waitKey(25) & 0xFF == ord('q'):
                 break
@@ -81,6 +85,7 @@ def main(video_path):
     cap.release()
     cv2.destroyAllWindows()
 
+    # Plot the data
     plt.plot(liquid_front_locations)
     plt.xlabel('Frame Number')
     plt.ylabel('Liquid Front X Location')
@@ -88,5 +93,5 @@ def main(video_path):
     plt.show()
 
 if __name__ == "__main__":
-    video_path = "media/DSC_0036_cropped3.avi"
+    video_path = "media/DSC_0038_cropped3.avi"
     main(video_path)
