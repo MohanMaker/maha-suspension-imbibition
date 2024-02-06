@@ -2,7 +2,7 @@
 # Record settings: high framerate, good lighting, high shutter speed
 # Trim video in QuickTime to include only portions where the liquid front is on the screen
 # Convert to .avi using 'ffmpeg -i input.mov -an -vcodec rawvideo -y output.avi'
-# Rotate and crop in Fiji to include the liquid, tube, and walls
+# Rotate and crop in Fiji to include only liquid, tube, and walls
 # Specify filepath and run this code
 
 import cv2
@@ -27,7 +27,7 @@ def analyze_liquid_front(frame, last_location):
     if len(frame) >= 5:
         frame = savgol_filter(frame, 5, 2) # window length 5, polynomial order 2
 
-    # Find the sharpest change in intensitylk
+    # Find the sharpest change in intensity
     intensity_change = np.diff(frame)
     location = np.argmin(intensity_change)
 
