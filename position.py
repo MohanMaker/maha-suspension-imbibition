@@ -1,54 +1,71 @@
+# Notes:
+# Record settings: high framerate, good lighting, high shutter speed
+# Trim video in QuickTime to include only portions where the liquid front is on the screen
+# Convert to .avi using 'ffmpeg -i input.mov -an -vcodec rawvideo -y output.avi'
+# Rotate and crop in Fiji to include only liquid, tube, and walls
+# Specify filepath and run this code
+
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy.signal import savgol_filter
+import csv
+import os
 
-def analyze_liquid_front(frame):
+def analyze_liquid_front(frame, last_location):
     # Convert to grayscale and blur the image
-    gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    blurred_frame = cv2.GaussianBlur(gray_frame, (3, 3), 0)
+    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    frame = cv2.GaussianBlur(frame, (3, 3), 0)
+
+    # Define the search window
+    frame = frame[:, last_location:last_location+100]
 
     # Median of each column to represent the column
-    compressed_frame = np.median(blurred_frame, axis=0)
+    frame = np.median(frame, axis=0)
+
+    # Apply Savitzky-Golay filter to smooth the intensity profile
+    if len(frame) >= 5:
+        frame = savgol_filter(frame, 5, 2) # window length 5, polynomial order 2
 
     # Find the sharpest change in intensity
-    intensity_change = np.diff(compressed_frame)
-    liquid_front_location = np.argmin(intensity_change)
+    intensity_change = np.diff(frame)
+    location = np.argmin(intensity_change)
 
-    # Mark the liquid front location on the frame
-    marked_frame = cv2.line(frame.copy(), (liquid_front_location, 0),
-                            (liquid_front_location, frame.shape[0]), (255, 0, 0), 2)
-
-    return marked_frame, liquid_front_location
+    return last_location + location
 
 def main(video_path):
-    # Stores the liquid front location for each frame
     liquid_front_locations = []
-    
-    # Video capture
+    last_location = 0
+
     cap = cv2.VideoCapture(video_path)
     if not cap.isOpened():
         print("Error: Could not open video.")
         return
 
-    # Frame by frame analysis
     while True:
         ret, frame = cap.read()
         if not ret:
             break
-        
-        marked_frame, location = analyze_liquid_front(frame)
-        liquid_front_locations.append(location)
-        cv2.imshow('Video Playback', marked_frame)
 
-        # Exit on 'q' keypress
+        # Analyze the frame, update the last location, and save the data
+        last_location = analyze_liquid_front(frame, last_location)
+        liquid_front_locations.append(last_location)
+
         if cv2.waitKey(25) & 0xFF == ord('q'):
             break
 
-    # Cleanup
     cap.release()
     cv2.destroyAllWindows()
 
-    # Plot results
+    # Write data to CSV
+    csv_filename = f"{os.path.splitext(os.path.basename(video_path))[0]}.csv"
+    with open(csv_filename, 'w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(['Liquid Front X Location'])
+        for location in liquid_front_locations:
+            writer.writerow([location])
+
+    # Plot the data
     plt.plot(liquid_front_locations)
     plt.xlabel('Frame Number')
     plt.ylabel('Liquid Front X Location')
@@ -56,5 +73,5 @@ def main(video_path):
     plt.show()
 
 if __name__ == "__main__":
-    video_path = "media/DSC_0036_cropped2.avi"
+    video_path = "media/020624_cropped.avi"
     main(video_path)
