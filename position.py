@@ -4,7 +4,7 @@
 # Trim video in QuickTime to include only portions where the liquid front is on the screen
 # Convert to .avi using 'ffmpeg -i input.mov -an -vcodec rawvideo -y output.avi'
 # Rotate and crop in Fiji to include only liquid, tube, and walls
-# Specify filepath and run this code
+# Specify video filepath and run this code to generate CSV
 
 import cv2
 import numpy as np
@@ -52,27 +52,17 @@ def main(video_path):
         last_location = analyze_liquid_front(frame, last_location)
         liquid_front_locations.append(last_location)
 
-        if cv2.waitKey(25) & 0xFF == ord('q'):
-            break
-
     cap.release()
     cv2.destroyAllWindows()
 
     # Write data to CSV
-    csv_filename = f"{os.path.splitext(os.path.basename(video_path))[0]}.csv"
+    csv_filename = f"media/{os.path.splitext(os.path.basename(video_path))[0]}.csv"
     with open(csv_filename, 'w', newline='') as file:
         writer = csv.writer(file)
         writer.writerow(['Liquid Front X Location'])
         for location in liquid_front_locations:
             writer.writerow([location])
 
-    # Plot the data
-    plt.plot(liquid_front_locations)
-    plt.xlabel('Frame Number')
-    plt.ylabel('Liquid Front X Location')
-    plt.title('Liquid Front X Location vs. Frame Number')
-    plt.show()
-
 if __name__ == "__main__":
-    video_path = "media/021324_cropped.avi"
+    video_path = "media/021324-glycerol.avi"
     main(video_path)
