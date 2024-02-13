@@ -1,10 +1,3 @@
-# Notes:
-# Record settings: high framerate, good lighting, high shutter speed
-# Trim video in QuickTime to include only portions where the liquid front is on the screen
-# Convert to .avi using 'ffmpeg -i input.mov -an -vcodec rawvideo -y output.avi'
-# Rotate and crop in Fiji to include only liquid, tube, and walls
-# Specify filepath and run this code
-
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt

@@ -1,4 +1,5 @@
 # Notes:
+# Prepare tube by washing in soap (increases hydrophilicity) and record video by touching the tube to a drop of water
 # Record settings: high framerate, good lighting, high shutter speed
 # Trim video in QuickTime to include only portions where the liquid front is on the screen
 # Convert to .avi using 'ffmpeg -i input.mov -an -vcodec rawvideo -y output.avi'
@@ -73,5 +74,5 @@ def main(video_path):
     plt.show()
 
 if __name__ == "__main__":
-    video_path = "media/020624_cropped.avi"
+    video_path = "media/021324_cropped.avi"
     main(video_path)
