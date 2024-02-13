@@ -82,5 +82,5 @@ def main(video_path):
     plt.show()
 
 if __name__ == "__main__":
-    video_path = "media/020624_cropped.avi"
+    video_path = "media/021324_cropped.avi"
     main(video_path)
