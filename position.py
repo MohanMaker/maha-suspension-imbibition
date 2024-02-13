@@ -4,7 +4,8 @@
 # Trim video in QuickTime to include only portions where the liquid front is on the screen
 # Convert to .avi using 'ffmpeg -i input.mov -an -vcodec rawvideo -y output.avi'
 # Rotate and crop in Fiji to include only liquid, tube, and walls
-# Specify video filepath and run this code to generate CSV
+# Specify video filepath and run this code to generate CSV data
+# Run plot.py to visualize the data
 
 import cv2
 import numpy as np
