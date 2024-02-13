@@ -57,28 +57,26 @@ def main(video_path):
         writer.writerow(['Liquid Front X Location'])
         for location in liquid_front_locations:
             writer.writerow([location])
-
-        # Assuming liquid_front_locations is already defined
-    # For demonstration, let's create a hypothetical range of frame numbers
+            
+    # Create range of frame numbers
     frame_numbers = np.arange(1, len(liquid_front_locations) + 1)
 
     # Plot the liquid front location vs. frame number in log-log scale
     plt.loglog(frame_numbers, liquid_front_locations, label='Liquid Front Location', marker='o', linestyle='-', markersize=4)
 
-    # Plot y=x by using the same values for x and y
-    plt.loglog(frame_numbers, frame_numbers, label='y=x', linestyle='--')
+    # Plot y=x
+    y_equals_x = frame_numbers * 80
+    plt.loglog(frame_numbers, y_equals_x, label='y=x', linestyle='--')
 
-    # Correctly plot y=x^1/2
-    # Calculate y=x^1/2 for the range of frame numbers
-    y_sqrt_x = np.sqrt(frame_numbers)
+    # Plot y=x^1/2
+    y_sqrt_x = np.sqrt(frame_numbers) * 250
     plt.loglog(frame_numbers, y_sqrt_x, label='y=x^1/2', linestyle=':')
 
-    # Adjusting the plot
+    # Add labels
     plt.xlabel('Frame Number')
     plt.ylabel('Liquid Front X Location')
     plt.title('Log-Log Plot of Liquid Front X Location vs. Frame Number')
     plt.legend()
-
     plt.show()
 
 if __name__ == "__main__":
