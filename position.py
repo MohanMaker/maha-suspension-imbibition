@@ -22,7 +22,7 @@ def analyze_liquid_front(frame, last_location):
 
     # Find the sharpest change in intensity
     intensity_change = np.diff(frame)
-    location = np.argmin(intensity_change)
+    location = np.argmax(intensity_change)
 
     return last_location + location
 
