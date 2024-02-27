@@ -8,7 +8,7 @@ import os
 def analyze_liquid_front(frame, last_location):
     # Convert to grayscale and blur the image
     frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    frame = cv2.GaussianBlur(frame, (3, 3), 0)
+    frame = cv2.GaussianBlur(frame, (7, 7), 0)
 
     # Define the search window
     frame = frame[:, last_location:last_location+100]
@@ -55,7 +55,7 @@ def main(video_path):
         cv2.imshow('Frame with detected liquid front', frame_with_line)
 
         # Wait for a key press; 1 ms wait, and if 'q' is pressed, exit the loop
-        if cv2.waitKey(1) & 0xFF == ord('q'):
+        if cv2.waitKey(250) & 0xFF == ord('q'):
             break
 
     cap.release()

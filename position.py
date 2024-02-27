@@ -8,7 +8,7 @@ import os
 def analyze_liquid_front(frame, last_location):
     # Convert to grayscale and blur the image
     frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    frame = cv2.GaussianBlur(frame, (3, 3), 0)
+    frame = cv2.GaussianBlur(frame, (7, 7), 0)
 
     # Define the search window
     frame = frame[:, last_location:last_location+100]
