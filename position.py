@@ -70,5 +70,5 @@ def main(video_path):
             writer.writerow([location])
 
 if __name__ == "__main__":
-    video_path = "media/022724-glycerol.avi"
+    video_path = "media/030724-glycerolsuspension-400umthintube.avi"
     main(video_path)
