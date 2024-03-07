@@ -55,7 +55,7 @@ def main(video_path):
         cv2.imshow('Frame with detected liquid front', frame_with_line)
 
         # Wait for a key press; 1 ms wait, and if 'q' is pressed, exit the loop
-        if cv2.waitKey(int(5000/int(cap.get(cv2.CAP_PROP_FRAME_COUNT)))) & 0xFF == ord('q'):
+        if cv2.waitKey(10) & 0xFF == ord('q'):
             break
 
     cap.release()
