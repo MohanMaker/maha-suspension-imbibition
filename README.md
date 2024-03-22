@@ -1,7 +1,7 @@
 # maha-suspension-imbibition
 
 ## Notes
-1. Prepare liquid or bead suspension according to specification.
+1. Prepare liquid or bead suspension according to specification. Choose tube size to use for experiment.
 2. Wash tube in soap (to increase hydrophilicity) and wipe slide with RainX (to make water stay in a high droplet).
 3. Record settings: camera window captures entire tube (including start where liquid goes in), sharp focus on tube/liquid (zoom in to set), high framerate (60 fps), good lighting (backlight), high shutter speed (1/4000).
 4. Record video by putting a drop of liquid on the slide (~0.25 mL) using a pipette, touching the tube to the drop of liquid, and letting capillary action drive the liquid through the tube.

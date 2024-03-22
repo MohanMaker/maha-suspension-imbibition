@@ -11,7 +11,7 @@ def analyze_liquid_front(frame, last_location):
     frame = cv2.GaussianBlur(frame, (7, 7), 0)
 
     # Define the search window
-    frame = frame[:, last_location:last_location+100]
+    frame = frame[:, last_location:last_location+25]
 
     # Median of each column to represent the column
     frame = np.median(frame, axis=0)
@@ -45,7 +45,7 @@ def main(video_path):
         liquid_front_locations.append(last_location)
 
         # Draw a vertical line at the detected liquid front location
-        color = (255, 0, 0)  # Blue color in BGR
+        color = (0, 0, 255)
         thickness = 2  # Thickness of the line
         start_point = (last_location, 0)  # Starting point of the line
         end_point = (last_location, frame.shape[0])  # Ending point of the line
@@ -70,5 +70,5 @@ def main(video_path):
             writer.writerow([location])
 
 if __name__ == "__main__":
-    video_path = "media/030724-glycerolsuspension-400umthintube.avi"
+    video_path = "media/031924-0.4suspension-normaltube.avi"
     main(video_path)
