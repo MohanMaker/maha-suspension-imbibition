@@ -32,5 +32,5 @@ def read_csv_and_plot(csv_filename):
     plt.show()
 
 if __name__ == "__main__":
-    csv_filename = "media/031924-0.4suspension-normaltube.csv"
+    csv_filename = "media/03beads400umtube360fps_cropped.csv"
     read_csv_and_plot(csv_filename)

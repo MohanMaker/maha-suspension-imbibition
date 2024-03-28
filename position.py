@@ -70,5 +70,5 @@ def main(video_path):
             writer.writerow([location])
 
 if __name__ == "__main__":
-    video_path = "media/031924-0.4suspension-normaltube.avi"
+    video_path = "media/03beads400umtube360fps_cropped.avi"
     main(video_path)
