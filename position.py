@@ -34,7 +34,7 @@ def main(video_path):
     if not cap.isOpened():
         print("Error: Could not open video.")
         return
-
+    
     while True:
         ret, frame = cap.read()
         if not ret:
@@ -50,6 +50,11 @@ def main(video_path):
         start_point = (last_location, 0)  # Starting point of the line
         end_point = (last_location, frame.shape[0])  # Ending point of the line
         frame_with_line = cv2.line(frame.copy(), start_point, end_point, color, thickness)
+
+        # Stretch the image vertically to increase readability
+        vertical_scale_factor = 50
+        new_height = int(frame_with_line.shape[0] * vertical_scale_factor)
+        frame_with_line = cv2.resize(frame_with_line, (1, new_height), interpolation=cv2.INTER_LINEAR)
 
         # Display the frame
         cv2.imshow('Frame with detected liquid front', frame_with_line)
