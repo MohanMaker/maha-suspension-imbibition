@@ -11,7 +11,7 @@ def analyze_liquid_front(frame, last_location):
     frame = cv2.GaussianBlur(frame, (7, 7), 0)
 
     # Define the search window
-    frame = frame[:, last_location:last_location+25]
+    frame = frame[:, last_location:last_location+10]
 
     # Median of each column to represent the column
     frame = np.median(frame, axis=0)
@@ -52,9 +52,9 @@ def main(video_path):
         frame_with_line = cv2.line(frame.copy(), start_point, end_point, color, thickness)
 
         # Stretch the image vertically to increase readability
-        vertical_scale_factor = 50
+        vertical_scale_factor = 10
         new_height = int(frame_with_line.shape[0] * vertical_scale_factor)
-        frame_with_line = cv2.resize(frame_with_line, (1, new_height), interpolation=cv2.INTER_LINEAR)
+        frame_with_line = cv2.resize(frame_with_line, (frame_with_line.shape[1], new_height), interpolation=cv2.INTER_LINEAR)
 
         # Display the frame
         cv2.imshow('Frame with detected liquid front', frame_with_line)
@@ -75,5 +75,5 @@ def main(video_path):
             writer.writerow([location])
 
 if __name__ == "__main__":
-    video_path = "media/03beads400umtube360fps_cropped.avi"
+    video_path = "media/test_2_8drops1propyl_cropped.avi"
     main(video_path)
