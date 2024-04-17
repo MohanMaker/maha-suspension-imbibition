@@ -11,7 +11,7 @@ def analyze_liquid_front(frame, last_location):
     frame = cv2.GaussianBlur(frame, (7, 7), 0)
 
     # Define the search window
-    frame = frame[:, last_location:last_location+10]
+    frame = frame[:, last_location:last_location+15]
 
     # Median of each column to represent the column
     frame = np.median(frame, axis=0)
@@ -21,27 +21,33 @@ def analyze_liquid_front(frame, last_location):
         frame = savgol_filter(frame, 5, 2) # window length 5, polynomial order 2
 
     # Find the sharpest change in intensity
-    intensity_change = np.diff(frame)
+    intensity_change = np.abs(np.diff(frame))
     location = np.argmax(intensity_change)
 
     return last_location + location
 
 def main(video_path):
     liquid_front_locations = []
-    last_location = 0
 
     cap = cv2.VideoCapture(video_path)
     if not cap.isOpened():
         print("Error: Could not open video.")
         return
     
+    # Capture and analyze the first frame, then subtract it from future frames
+    ret, firstframe = cap.read()
+    if not ret:
+        return
+    last_location = analyze_liquid_front(firstframe, 0)
+    liquid_front_locations.append(last_location)
+
     while True:
         ret, frame = cap.read()
         if not ret:
-            break
+            return
 
         # Analyze the frame, update the last location, and save the data
-        last_location = analyze_liquid_front(frame, last_location)
+        last_location = analyze_liquid_front(cv2.absdiff(frame, firstframe), last_location)
         liquid_front_locations.append(last_location)
 
         # Draw a vertical line at the detected liquid front location
@@ -49,7 +55,7 @@ def main(video_path):
         thickness = 2  # Thickness of the line
         start_point = (last_location, 0)  # Starting point of the line
         end_point = (last_location, frame.shape[0])  # Ending point of the line
-        frame_with_line = cv2.line(frame.copy(), start_point, end_point, color, thickness)
+        frame_with_line = cv2.line(cv2.absdiff(frame, firstframe).copy(), start_point, end_point, color, thickness)
 
         # Stretch the image vertically to increase readability
         vertical_scale_factor = 10
@@ -75,5 +81,5 @@ def main(video_path):
             writer.writerow([location])
 
 if __name__ == "__main__":
-    video_path = "media/test_2_8drops1propyl_cropped.avi"
+    video_path = "media/041624-mohansuspeniononly_cropped2.avi"
     main(video_path)
