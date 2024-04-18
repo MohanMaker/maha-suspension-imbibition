@@ -11,10 +11,10 @@ def analyze_liquid_front(frame, last_location):
     frame = cv2.GaussianBlur(frame, (7, 7), 0)
 
     # Define the search window
-    frame = frame[:, last_location:last_location+15]
+    frame = frame[:, last_location:min(last_location + 15, frame.shape[1])]
 
-    # Median of each column to represent the column
-    frame = np.median(frame, axis=0)
+    # Mean of each column to represent the column
+    frame = np.mean(frame, axis=0)
 
     # Apply Savitzky-Golay filter to smooth the intensity profile
     if len(frame) >= 5:
@@ -52,9 +52,9 @@ def main(video_path):
 
         # Draw a vertical line at the detected liquid front location
         color = (0, 0, 255)
-        thickness = 2  # Thickness of the line
-        start_point = (last_location, 0)  # Starting point of the line
-        end_point = (last_location, frame.shape[0])  # Ending point of the line
+        thickness = 2
+        start_point = (last_location, 0)
+        end_point = (last_location, frame.shape[0])
         frame_with_line = cv2.line(cv2.absdiff(frame, firstframe).copy(), start_point, end_point, color, thickness)
 
         # Stretch the image vertically to increase readability
