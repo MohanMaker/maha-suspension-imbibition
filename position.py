@@ -44,7 +44,7 @@ def main(video_path):
     while True:
         ret, frame = cap.read()
         if not ret:
-            return
+            break
 
         # Analyze the frame, update the last location, and save the data
         last_location = analyze_liquid_front(cv2.absdiff(frame, firstframe), last_location)
@@ -81,5 +81,5 @@ def main(video_path):
             writer.writerow([location])
 
 if __name__ == "__main__":
-    video_path = "media/041624-mohansuspeniononly_cropped2.avi"
+    video_path = "media/041624-mohansuspeniononly_cropped.avi"
     main(video_path)
